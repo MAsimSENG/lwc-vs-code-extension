@@ -1,8 +1,9 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { createUpdatedJsFileContents, getCommonPath, readLWCComponent, writeToJsFile } from './util';
+import { createUpdatedJsFileContents, getCommonPath, readLWCComponent, writeToJsFile, createUpdatedHtmlFileContents} from './util';
 import { extractApis, extractChildComponents, getPathsToChildComponents } from './apiRefactorUtil';
+import { write } from 'fs';
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
@@ -35,10 +36,13 @@ export function activate(context: vscode.ExtensionContext) {
 
 			 panel.webview.onDidReceiveMessage((message: {apiNames:{oldName:string,newName:string}[]})=>{
 				const updatedJsFile = createUpdatedJsFileContents(jsFileContents,message.apiNames);
+				const updateHtmlFile = createUpdatedHtmlFileContents(htmlFileContents,message.apiNames);
 				if(pathToCurrentComponentFolder.endsWith(".html")){
 					pathToCurrentComponentFolder = pathToCurrentComponentFolder.replace(".html",".js");
 				}
+
 				writeToJsFile(jsFilePath,updatedJsFile);
+				writeToJsFile(htmlFilePath,updateHtmlFile)
 			 },undefined,context.subscriptions);
 			
 		}

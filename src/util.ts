@@ -39,3 +39,11 @@ export function createUpdatedJsFileContents(jsFileContents:string,updatedApiName
     let updatedJsFile = jsFileContents.replace(apiRegex,"");
     return updatedJsFile.substring(0,classDeclarationEndIndex) + "\n" + updatedApiNames.map(name=>`@api ${name.newName};\n`).join(" ") + updatedJsFile.substring(classDeclarationEndIndex+1);
 }
+
+export function createUpdatedHtmlFileContents(htmlFileContents:string,updatedApiNames:apiNames){
+    updatedApiNames.forEach((apiName)=>{
+        const apiRegex = new RegExp(`/${apiName.oldName}/g`);
+        htmlFileContents = htmlFileContents.replace(`${apiName.oldName}`,`${apiName.newName}`);
+    });
+    return htmlFileContents;
+}
