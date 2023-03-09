@@ -17,30 +17,28 @@ export function activate(context: vscode.ExtensionContext) {
 	let disposable = vscode.commands.registerCommand('lwcrefactor.helloWorld', () => {
 		let editor = vscode.window.activeTextEditor;
 		if(editor){
-
 			let [commonPathForAllComponents,pathToCurrentComponentFolder,nameofCurrentComponent]= getCommonPath(editor.document.uri.fsPath);
 			vscode.window.showInformationMessage(nameofCurrentComponent as string);
-
 			const [htmlFileContents, jsFileContents,jsFilePath,htmlFilePath] = readLWCComponent(pathToCurrentComponentFolder as string,nameofCurrentComponent as string);
 			const namesOfAllChildComponents = extractChildComponents(htmlFileContents);
 			if(namesOfAllChildComponents){
 				let pathsToAllChildComponents = getPathsToChildComponents(commonPathForAllComponents as string,namesOfAllChildComponents );
 			}
-
-			const apiNames = extractApis(jsFileContents);
-			
+			const apiNames = extractApis(jsFileContents);			
 			let panel = vscode.window.createWebviewPanel("random","LWC Refactor",vscode.ViewColumn.One,
 				{enableScripts:true}
 			 );
 			 panel.webview.html = getWebViewHtml(apiNames);
-
 			 panel.webview.onDidReceiveMessage((message: {apiNames:{oldName:string,newName:string}[]})=>{
 				const updatedJsFile = createUpdatedJsFileContents(jsFileContents,message.apiNames);
+				const updatedApiNames = message.apiNames.map((name)=>{
+					return {name:name.newName, defaultValue:''};
+				});				
+				panel.webview.html = getWebViewHtml(updatedApiNames);
 				const updateHtmlFile = createUpdatedHtmlFileContents(htmlFileContents,message.apiNames);
 				if(pathToCurrentComponentFolder.endsWith(".html")){
 					pathToCurrentComponentFolder = pathToCurrentComponentFolder.replace(".html",".js");
 				}
-
 				writeToJsFile(jsFilePath,updatedJsFile);
 				writeToJsFile(htmlFilePath,updateHtmlFile)
 			 },undefined,context.subscriptions);
@@ -75,10 +73,7 @@ function getWebViewHtml(apiNames:{name:string, defaultValue:string}[]){
 			const oldApiName = event.target.id; 
 			const newApiName = event.target.value; 
 			const index = arrayOfApiNames.findIndex(apiName => apiName.oldName === oldApiName)
-			arrayOfApiNames[index] = {oldName:oldApiName,newName:newApiName};
-			vscode.postMessage({
-				apiNames: [...arrayOfApiNames],
-			});			
+			arrayOfApiNames[index] = {oldName:oldApiName,newName:newApiName};		
 		}
 
 		function handleSubmit(){
