@@ -33,11 +33,11 @@ export function writeToJsFile(filePath:string,content:string):void{
 
 
 export function createUpdatedJsFileContents(jsFileContents:string,updatedApiNames:apiNames){
-    const apiRegex = new RegExp(/@api(\s)+[a-zA-Z_]+(\w)*(\s)*;/g);
+    const apiRegex = new RegExp(/@api\s+([\w]+)\s*(\s*:\s*[\w]+(\s*\|\s*[\w]+\s*)*)?(\s*\=\s*.+)?;/g);
     const classDeclarationIndex = jsFileContents.indexOf('export default class');
     const classDeclarationEndIndex = jsFileContents.indexOf('{', classDeclarationIndex) + 1;
     let updatedJsFile = jsFileContents.replace(apiRegex,"");
-    return updatedJsFile.substring(0,classDeclarationEndIndex) + "\n" + updatedApiNames.map(name=>`@api ${name.newName};\n`).join(" ") + updatedJsFile.substring(classDeclarationEndIndex+1);
+    return updatedJsFile.substring(0,classDeclarationEndIndex) + "\n" + updatedApiNames.map(name=>`@api ${name.name}${name.type || ''}${name.defaultValue || ''} ;\n`).join(" ") + updatedJsFile.substring(classDeclarationEndIndex+1);
 }
 
 export function createUpdatedHtmlFileContents(htmlFileContents:string,updatedApiNames:apiNames){

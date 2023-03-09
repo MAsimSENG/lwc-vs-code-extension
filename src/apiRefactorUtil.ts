@@ -1,12 +1,13 @@
 export function extractApis(javascriptFileContent:string){
-	let apiNames :{name:string,defaultValue:string}[] = [];
-	let apiDeclarationMatches = javascriptFileContent.match(/@api\s+([\w]+)\s*(?:=\s*(.*))?;/g);
+	let apiNames :{name:string,type:string,defaultValue:string}[] = [];
+	let apiDeclarationMatches = javascriptFileContent.match(/@api\s+([\w]+)\s*(\s*:\s*[\w]+(\s*\|\s*[\w]+\s*)*)?(\s*\=\s*.+)?;/g);
     if(apiDeclarationMatches){
 		for (const match of apiDeclarationMatches) {
-			let matches = match.match(/@api\s+([\w]+)\s*(?:=\s*(.*))?;/);
+			const newRegex = /@api\s+([\w]+)\s*(\s*:\s*[\w]+(\s*\|\s*[\w]+\s*)*)?(\s*\=\s*.+)?;/;
+			let matches = match.match(newRegex);			
 			if(matches){
-				const [, name, defaultValue] = matches;
-				apiNames.push({ name, defaultValue });
+				const [, name,type,, defaultValue] = matches;
+				apiNames.push({ name,type, defaultValue });
 			}
 		  }  
 	}

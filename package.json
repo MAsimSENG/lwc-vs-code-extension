@@ -1,5 +1,6 @@
 {
   "name": "lwcrefactor",
+  "publisher": "AsimAli",
   "displayName": "lwcRefactor",
   "description": "",
   "version": "0.0.1",
@@ -10,14 +11,14 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:lwcrefactor.helloWorld"
+    "onCommand:lwcrefactor.LWCREFACTOR"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "lwcrefactor.helloWorld",
-        "title": "helloWorld"
+        "command": "lwcrefactor.LWCREFACTOR",
+        "title": "LWCREFACTOR"
       }
     ]
   },

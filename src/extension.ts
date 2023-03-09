@@ -14,11 +14,10 @@ export function activate(context: vscode.ExtensionContext) {
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('lwcrefactor.helloWorld', () => {
+	let disposable = vscode.commands.registerCommand('lwcrefactor.LWCREFACTOR', () => {
 		let editor = vscode.window.activeTextEditor;
 		if(editor){
 			let [commonPathForAllComponents,pathToCurrentComponentFolder,nameofCurrentComponent]= getCommonPath(editor.document.uri.fsPath);
-			vscode.window.showInformationMessage(nameofCurrentComponent as string);
 			const [htmlFileContents, jsFileContents,jsFilePath,htmlFilePath] = readLWCComponent(pathToCurrentComponentFolder as string,nameofCurrentComponent as string);
 			const namesOfAllChildComponents = extractChildComponents(htmlFileContents);
 			if(namesOfAllChildComponents){
@@ -29,18 +28,23 @@ export function activate(context: vscode.ExtensionContext) {
 				{enableScripts:true}
 			 );
 			 panel.webview.html = getWebViewHtml(apiNames);
-			 panel.webview.onDidReceiveMessage((message: {apiNames:{oldName:string,newName:string}[]})=>{
-				const updatedJsFile = createUpdatedJsFileContents(jsFileContents,message.apiNames);
+			 panel.webview.onDidReceiveMessage((message: {apiNames:{oldName:string,newName:string,type:string}[]})=>{
+				const updatedApiNameTypeValue = message.apiNames.map((name)=>{
+					const indexInApiNames = apiNames.findIndex((originalApiName)=>originalApiName.name === name.oldName);
+					return {name:name.newName,type:apiNames[indexInApiNames].type,defaultValue:apiNames[indexInApiNames].defaultValue};
+				});
+				const updatedJsFile = createUpdatedJsFileContents(jsFileContents,updatedApiNameTypeValue);
+				const updateHtmlFile = createUpdatedHtmlFileContents(htmlFileContents,message.apiNames);
+
 				const updatedApiNames = message.apiNames.map((name)=>{
 					return {name:name.newName, defaultValue:''};
 				});				
 				panel.webview.html = getWebViewHtml(updatedApiNames);
-				const updateHtmlFile = createUpdatedHtmlFileContents(htmlFileContents,message.apiNames);
-				if(pathToCurrentComponentFolder.endsWith(".html")){
-					pathToCurrentComponentFolder = pathToCurrentComponentFolder.replace(".html",".js");
-				}
+				// if(pathToCurrentComponentFolder.endsWith(".html")){
+				// 	pathToCurrentComponentFolder = pathToCurrentComponentFolder.replace(".html",".js");
+				// }
 				writeToJsFile(jsFilePath,updatedJsFile);
-				writeToJsFile(htmlFilePath,updateHtmlFile)
+				writeToJsFile(htmlFilePath,updateHtmlFile);
 			 },undefined,context.subscriptions);
 			
 		}
@@ -50,7 +54,7 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(disposable);
 }
 
-function getWebViewHtml(apiNames:{name:string, defaultValue:string}[]){
+function getWebViewHtml(apiNames:{name:string,defaultValue:string}[]){
 	let apiNamesList = apiNames.reduce((totalString,name)=>{
 		return totalString += `<input placeholder=${name.name} onblur="handleBlur(event)" type="text" id=${name.name}> <br>`;
 	},'');

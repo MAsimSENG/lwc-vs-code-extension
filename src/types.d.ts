@@ -1,5 +1,7 @@
 export declare type apiNames = 
-{
-    oldName: string;
-    newName: string;
+{   name?:string;
+    defaultValue?:string;
+    type?:string;
+    oldName?: string;
+    newName?: string;
 }[]
