@@ -12,12 +12,12 @@ export function getCommonPath(currentFilePath:string){
 }
 
 export function readLWCComponent(pathOfCurrentComponent:string, nameofCurrentComponent:string): string[]{
-        const jsFilePath = pathOfCurrentComponent +'/' + nameofCurrentComponent +'.ts';
-        const htmlFilePath = pathOfCurrentComponent +'/' + nameofCurrentComponent + '.html';
-        const jsFileContents =  fs.readFileSync(jsFilePath).toString();	
-        const htmlFileContents =  fs.readFileSync(htmlFilePath).toString();	
-        return [htmlFileContents,jsFileContents,jsFilePath,htmlFilePath];
-    }
+    const jsFilePath = pathOfCurrentComponent +'/' + nameofCurrentComponent +'.ts';
+    const htmlFilePath = pathOfCurrentComponent +'/' + nameofCurrentComponent + '.html';
+    const jsFileContents =  fs.readFileSync(jsFilePath).toString();	
+    const htmlFileContents =  fs.readFileSync(htmlFilePath).toString();	
+    return [htmlFileContents,jsFileContents,jsFilePath,htmlFilePath];
+}
 
     
 export function writeToJsFile(filePath:string,content:string):void{
