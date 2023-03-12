@@ -40,11 +40,9 @@ export function activate(context: vscode.ExtensionContext) {
 					return {name:name.newName, defaultValue:''};
 				});				
 				panel.webview.html = getWebViewHtml(updatedApiNames);
-				// if(pathToCurrentComponentFolder.endsWith(".html")){
-				// 	pathToCurrentComponentFolder = pathToCurrentComponentFolder.replace(".html",".js");
-				// }
 				writeToJsFile(jsFilePath,updatedJsFile);
 				writeToJsFile(htmlFilePath,updateHtmlFile);
+				panel.dispose();
 			 },undefined,context.subscriptions);
 			
 		}
@@ -56,18 +54,25 @@ export function activate(context: vscode.ExtensionContext) {
 
 function getWebViewHtml(apiNames:{name:string,defaultValue:string}[]){
 	let apiNamesList = apiNames.reduce((totalString,name)=>{
-		return totalString += `<input placeholder=${name.name} onblur="handleBlur(event)" type="text" id=${name.name}> <br>`;
+		return totalString += `<span> @api ${name.name}</span>` + `<input placeholder=${name.name} onblur="handleBlur(event)" type="text" id=${name.name}> <br> <br> `;
 	},'');
 	return `<!DOCTYPE html>
 	<html lang="en">
 	<head>
+	<style>
+	body{
+		background-color: powderblue;
+		display:grid;
+	}
+	</style>
 	</head>
 	<body>
+	<h2>Bismillah </h2>
+	<h3>Bulk rename your api properties and have them changed in your html too! </h3> 
 	${apiNamesList}
 	<button type="button" onclick="handleSubmit()">Submit </button>
 	<script>
 		const vscode = acquireVsCodeApi();
-
 		let arrayOfApiNames = [];
 		let allInputs = document.getElementsByTagName("input");
 		for(let input of allInputs){
@@ -75,9 +80,12 @@ function getWebViewHtml(apiNames:{name:string,defaultValue:string}[]){
 		};
 		function handleBlur(event){
 			const oldApiName = event.target.id; 
-			const newApiName = event.target.value; 
-			const index = arrayOfApiNames.findIndex(apiName => apiName.oldName === oldApiName)
-			arrayOfApiNames[index] = {oldName:oldApiName,newName:newApiName};		
+			const newNameValue = event.target.value;
+			if(newNameValue){
+				const newApiName = newNameValue; 
+				const index = arrayOfApiNames.findIndex(apiName => apiName.oldName === oldApiName)
+				arrayOfApiNames[index] = {oldName:oldApiName,newName:newApiName};			
+			}
 		}
 
 		function handleSubmit(){
