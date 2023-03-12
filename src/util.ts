@@ -39,16 +39,16 @@ export function createUpdatedJsFileContents(jsFileContents:string,updatedApiName
         return `@api ${nameObject.name}${nameObject.type || ''}${nameObject.defaultValue || ''};`;
     }    
     const apiRegex = new RegExp(/@api\s+([\w]+)\s*(\s*:\s*[\w]+(\s*\|\s*[\w]+\s*)*)?(\s*\=\s*.+)?;/g);
-    const classDeclarationIndex = jsFileContents.indexOf('export default class');
-    const classDeclarationEndIndex = jsFileContents.indexOf('{', classDeclarationIndex) + 1;
-    return jsFileContents.replaceAll(apiRegex,replacer);
-    // return updatedJsFile.substring(0,classDeclarationEndIndex) + "\n" + updatedApiNames.map(name=>`@api ${name.name}${name.type || ''}${name.defaultValue || ''} ;\n`).join(" ") + updatedJsFile.substring(classDeclarationEndIndex+1);
+    let updatedJsFileWithApi =  jsFileContents.replaceAll(apiRegex,replacer);
+    updatedApiNames.forEach((apiName)=>{
+        updatedJsFileWithApi = updatedJsFileWithApi.replace(`this.${apiName.oldName}`,`this.${apiName.name}`);
+    });
+     return updatedJsFileWithApi;
 }
 
     
 export function createUpdatedHtmlFileContents(htmlFileContents:string,updatedApiNames:apiNames){
     updatedApiNames.forEach((apiName)=>{
-        const apiRegex = new RegExp(`/${apiName.oldName}/g`);
         htmlFileContents = htmlFileContents.replace(`${apiName.oldName}`,`${apiName.newName}`);
     });
     return htmlFileContents;
