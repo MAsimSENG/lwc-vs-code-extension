@@ -31,7 +31,7 @@ export function activate(context: vscode.ExtensionContext) {
 			 panel.webview.onDidReceiveMessage((message: {apiNames:{oldName:string,newName:string,type:string}[]})=>{
 				const updatedApiNameTypeValue = message.apiNames.map((name)=>{
 					const indexInApiNames = apiNames.findIndex((originalApiName)=>originalApiName.name === name.oldName);
-					return {name:name.newName,type:apiNames[indexInApiNames].type,defaultValue:apiNames[indexInApiNames].defaultValue};
+					return {name:name.newName,oldName:name.oldName,type:apiNames[indexInApiNames].type,defaultValue:apiNames[indexInApiNames].defaultValue};
 				});
 				const updatedJsFile = createUpdatedJsFileContents(jsFileContents,updatedApiNameTypeValue);
 				const updateHtmlFile = createUpdatedHtmlFileContents(htmlFileContents,message.apiNames);

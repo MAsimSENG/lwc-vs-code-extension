@@ -12,7 +12,7 @@ export function getCommonPath(currentFilePath:string){
 }
 
 export function readLWCComponent(pathOfCurrentComponent:string, nameofCurrentComponent:string): string[]{
-    const jsFilePath = pathOfCurrentComponent +'/' + nameofCurrentComponent +'.ts';
+    const jsFilePath = pathOfCurrentComponent +'/' + nameofCurrentComponent +'.js';
     const htmlFilePath = pathOfCurrentComponent +'/' + nameofCurrentComponent + '.html';
     const jsFileContents =  fs.readFileSync(jsFilePath).toString();	
     const htmlFileContents =  fs.readFileSync(htmlFilePath).toString();	
@@ -33,13 +33,19 @@ export function writeToJsFile(filePath:string,content:string):void{
 
 
 export function createUpdatedJsFileContents(jsFileContents:string,updatedApiNames:apiNames){
+    function replacer(api:string, name:string, type :string | undefined,equalSign : string | undefined, defaultValue : string | undefined,offset:number, string:string){
+        const indexInApiNames =  updatedApiNames.findIndex(oldName => oldName.oldName === name);
+        const nameObject = updatedApiNames[indexInApiNames];
+        return `@api ${nameObject.name}${nameObject.type || ''}${nameObject.defaultValue || ''};`;
+    }    
     const apiRegex = new RegExp(/@api\s+([\w]+)\s*(\s*:\s*[\w]+(\s*\|\s*[\w]+\s*)*)?(\s*\=\s*.+)?;/g);
     const classDeclarationIndex = jsFileContents.indexOf('export default class');
     const classDeclarationEndIndex = jsFileContents.indexOf('{', classDeclarationIndex) + 1;
-    let updatedJsFile = jsFileContents.replace(apiRegex,"");
-    return updatedJsFile.substring(0,classDeclarationEndIndex) + "\n" + updatedApiNames.map(name=>`@api ${name.name}${name.type || ''}${name.defaultValue || ''} ;\n`).join(" ") + updatedJsFile.substring(classDeclarationEndIndex+1);
+    return jsFileContents.replaceAll(apiRegex,replacer);
+    // return updatedJsFile.substring(0,classDeclarationEndIndex) + "\n" + updatedApiNames.map(name=>`@api ${name.name}${name.type || ''}${name.defaultValue || ''} ;\n`).join(" ") + updatedJsFile.substring(classDeclarationEndIndex+1);
 }
 
+    
 export function createUpdatedHtmlFileContents(htmlFileContents:string,updatedApiNames:apiNames){
     updatedApiNames.forEach((apiName)=>{
         const apiRegex = new RegExp(`/${apiName.oldName}/g`);
