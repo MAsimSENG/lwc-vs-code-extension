@@ -11,7 +11,7 @@
     "type": "git",
     "url": "https://github.com/MAsimSENG/LWC-Refactor-VS-Code-"
   },
-  "icon": "./src/flyingToTheMoon.png",
+  "icon": "./flyingToTheMoon.png",
   "categories": [
     "Programming Languages",
     "Visualization"
