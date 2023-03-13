@@ -17,8 +17,13 @@ export function activate(context: vscode.ExtensionContext) {
 	let disposable = vscode.commands.registerCommand('lwcrefactor.LWCREFACTOR', () => {
 		let editor = vscode.window.activeTextEditor;
 		if(editor){
+			if(!editor.document.uri.fsPath.endsWith('.ts') && !editor.document.uri.fsPath.endsWith('.js') ){
+				vscode.window.showErrorMessage('Please run the extension from your components js or ts file.');
+				return;
+			}
+			const isTsFile = editor.document.uri.fsPath.endsWith('.ts');
 			let [commonPathForAllComponents,pathToCurrentComponentFolder,nameofCurrentComponent]= getCommonPath(editor.document.uri.fsPath);
-			const [htmlFileContents, jsFileContents,jsFilePath,htmlFilePath] = readLWCComponent(pathToCurrentComponentFolder as string,nameofCurrentComponent as string);
+			const [htmlFileContents, jsFileContents,jsFilePath,htmlFilePath] = readLWCComponent(pathToCurrentComponentFolder as string,nameofCurrentComponent as string,isTsFile);
 			const namesOfAllChildComponents = extractChildComponents(htmlFileContents);
 			if(namesOfAllChildComponents){
 				let pathsToAllChildComponents = getPathsToChildComponents(commonPathForAllComponents as string,namesOfAllChildComponents );

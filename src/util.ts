@@ -11,8 +11,9 @@ export function getCommonPath(currentFilePath:string){
 	return [(lwcFolderPath.join('/')),(componentFolderLocation.join('/')),(path[path.length-2])];
 }
 
-export function readLWCComponent(pathOfCurrentComponent:string, nameofCurrentComponent:string): string[]{
-    const jsFilePath = pathOfCurrentComponent +'/' + nameofCurrentComponent +'.ts';
+export function readLWCComponent(pathOfCurrentComponent:string, nameofCurrentComponent:string,isTsFile:boolean): string[]{
+    const ecmaScriptExtension = isTsFile ? '.ts' : '.js';
+    const jsFilePath = pathOfCurrentComponent +'/' + nameofCurrentComponent + ecmaScriptExtension;
     const htmlFilePath = pathOfCurrentComponent +'/' + nameofCurrentComponent + '.html';
     const jsFileContents =  fs.readFileSync(jsFilePath).toString();	
     const htmlFileContents =  fs.readFileSync(htmlFilePath).toString();	

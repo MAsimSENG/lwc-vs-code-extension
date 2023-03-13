@@ -41,5 +41,5 @@ export function getPathsToChildComponents(parentDirectoryForAllComponents:string
 			const componentName = extractComponentName(childComponentName);
 			return parentDirectoryForAllComponents + "/" + nameSpace + "/" + componentName?.slice(1,componentName.length);
 		}
-	})
+	});
 }
