@@ -3,7 +3,7 @@
   "publisher": "AsimAli",
   "displayName": "Lightning Web Components Refactor",
   "description": "Rename one or more of your @api properties in both ts/js files and html file.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "engines": {
     "vscode": "^1.75.0"
   },
