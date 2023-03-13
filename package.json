@@ -2,7 +2,7 @@
   "name": "lwcrefactor",
   "publisher": "AsimAli",
   "displayName": "Lightning Web Components Refactor",
-  "description": "Rename one or more of your @api properties in both ts/js files and html file.",
+  "description": "@api renames reflected both in ts/js and html file for LWC.",
   "version": "1.2.0",
   "engines": {
     "vscode": "^1.75.0"
