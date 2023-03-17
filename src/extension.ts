@@ -19,8 +19,6 @@ export function activate(context: vscode.ExtensionContext) {
 			const jsFileContents = readLWCScriptFile(jsFilePath);
 			const htmlFilePath = getLWCHTMLFileUri(pathToCurrentComponentFolder,nameofCurrentComponent);
 			const htmlFileContents = readLWCHTMLFile(htmlFilePath);
-			vscode.window.showErrorMessage(htmlFileContents);
-			vscode.window.showErrorMessage(jsFileContents);
 
 			const apiNames = extractApis(jsFileContents);			
 			let panel = vscode.window.createWebviewPanel("random","LWC Refactor",vscode.ViewColumn.One,
@@ -28,6 +26,8 @@ export function activate(context: vscode.ExtensionContext) {
 			 );
 			 panel.webview.html = getWebViewHtml(apiNames);
 			 panel.webview.onDidReceiveMessage((message: {apiNames:{oldName:string,newName:string,type:string}[]})=>{
+				console.log('Received message:', message);
+
 				const updatedApiNameTypeValue = message.apiNames.map((name)=>{
 					const indexInApiNames = apiNames.findIndex((originalApiName)=>originalApiName.name === name.oldName);
 					return {name:name.newName,oldName:name.oldName,type:apiNames[indexInApiNames].type,defaultValue:apiNames[indexInApiNames].defaultValue};
@@ -41,6 +41,7 @@ export function activate(context: vscode.ExtensionContext) {
 				panel.webview.html = getWebViewHtml(updatedApiNames);
 				writeToJsFile(jsFilePath,updatedJsFile);
 				writeToJsFile(htmlFilePath,updateHtmlFile);
+
 				panel.dispose();
 			 },undefined,context.subscriptions);
 			

@@ -1,3 +1,4 @@
+import { globalApiRegex } from './apiRefactor/constants';
 import * as vscode from 'vscode';
 import { apiNames } from './types';
 
@@ -63,7 +64,7 @@ export function createUpdatedJsFileContents(jsFileContents:string,updatedApiName
         const nameObject = updatedApiNames[indexInApiNames];
         return `@api ${nameObject.name}${nameObject.type || ''}${nameObject.defaultValue || ''};`;
     }    
-    const apiRegex = new RegExp(/@api\s+([\w]+)\s*((\?)?\s*:\s*[\w]+(\s*\|\s*[\w]+\s*)*)?(\s*\=\s*.+)?;/g);
+    const apiRegex = new RegExp(globalApiRegex);
     let updatedJsFileWithApi =  jsFileContents.replaceAll(apiRegex,replacer);
     updatedApiNames.forEach((apiName)=>{
         updatedJsFileWithApi = updatedJsFileWithApi.replace(`this.${apiName.oldName}`,`this.${apiName.name}`);

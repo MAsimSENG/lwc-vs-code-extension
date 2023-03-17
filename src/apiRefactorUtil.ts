@@ -1,11 +1,10 @@
+import { globalApiRegex, apiRegex } from './apiRefactor/constants';
 export function extractApis(javascriptFileContent:string){
 	let apiNames :{name:string,type:string,defaultValue:string}[] = [];
-	let apiDeclarationMatches = javascriptFileContent.match(/@api\s+([\w]+)\s*(\s*:\s*[\w]+(\s*\|\s*[\w]+\s*)*)?(\s*\=\s*.+)?;/g);
+	let apiDeclarationMatches = javascriptFileContent.match(globalApiRegex);
     if(apiDeclarationMatches){
 		for (const match of apiDeclarationMatches) {
-			const newRegex = /@api\s+([\w]+)\s*((\?)?\s*:\s*[\w]+(\s*\|\s*[\w]+\s*)*)?(\s*\=\s*.+)?;/;
-			let matches = match.match(newRegex);
-
+			let matches = match.match(apiRegex);
 			if(matches){
 				const [, name,type,, defaultValue] = matches;
 				apiNames.push({ name,type, defaultValue });
