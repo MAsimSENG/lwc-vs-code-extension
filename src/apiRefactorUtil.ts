@@ -3,8 +3,9 @@ export function extractApis(javascriptFileContent:string){
 	let apiDeclarationMatches = javascriptFileContent.match(/@api\s+([\w]+)\s*(\s*:\s*[\w]+(\s*\|\s*[\w]+\s*)*)?(\s*\=\s*.+)?;/g);
     if(apiDeclarationMatches){
 		for (const match of apiDeclarationMatches) {
-			const newRegex = /@api\s+([\w]+)\s*(\s*:\s*[\w]+(\s*\|\s*[\w]+\s*)*)?(\s*\=\s*.+)?;/;
-			let matches = match.match(newRegex);			
+			const newRegex = /@api\s+([\w]+)\s*((\?)?\s*:\s*[\w]+(\s*\|\s*[\w]+\s*)*)?(\s*\=\s*.+)?;/;
+			let matches = match.match(newRegex);
+
 			if(matches){
 				const [, name,type,, defaultValue] = matches;
 				apiNames.push({ name,type, defaultValue });

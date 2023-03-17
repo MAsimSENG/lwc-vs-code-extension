@@ -1,19 +1,7 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { createUpdatedJsFileContents, getCommonPath, readLWCComponent, writeToJsFile, createUpdatedHtmlFileContents} from './util';
-import { extractApis, extractChildComponents, getPathsToChildComponents } from './apiRefactorUtil';
-import { write } from 'fs';
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
+import { createUpdatedJsFileContents, getCommonPath, writeToJsFile, createUpdatedHtmlFileContents, getUriOfCurrentComponentFolder, getNameOfCurrentComponent, getLWCScriptFileUri, readLWCScriptFile, getLWCHTMLFileUri, readLWCHTMLFile} from './util';
+import { extractApis } from './apiRefactorUtil';
 export function activate(context: vscode.ExtensionContext) {
-
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
 	let disposable = vscode.commands.registerCommand('lwcrefactor.LWCREFACTOR', () => {
 		let editor = vscode.window.activeTextEditor;
 		if(editor){
@@ -22,12 +10,18 @@ export function activate(context: vscode.ExtensionContext) {
 				return;
 			}
 			const isTsFile = editor.document.uri.fsPath.endsWith('.ts');
-			let [commonPathForAllComponents,pathToCurrentComponentFolder,nameofCurrentComponent]= getCommonPath(editor.document.uri.fsPath);
-			const [htmlFileContents, jsFileContents,jsFilePath,htmlFilePath] = readLWCComponent(pathToCurrentComponentFolder as string,nameofCurrentComponent as string,isTsFile);
-			const namesOfAllChildComponents = extractChildComponents(htmlFileContents);
-			if(namesOfAllChildComponents){
-				let pathsToAllChildComponents = getPathsToChildComponents(commonPathForAllComponents as string,namesOfAllChildComponents );
-			}
+			const currentFilePath = editor.document.uri.fsPath; 
+			let commonPathForAllComponents= getCommonPath(currentFilePath);
+			let pathToCurrentComponentFolder = getUriOfCurrentComponentFolder(currentFilePath);
+			let nameofCurrentComponent = getNameOfCurrentComponent(currentFilePath);
+
+			const jsFilePath = getLWCScriptFileUri(pathToCurrentComponentFolder,nameofCurrentComponent,isTsFile);
+			const jsFileContents = readLWCScriptFile(jsFilePath);
+			const htmlFilePath = getLWCHTMLFileUri(pathToCurrentComponentFolder,nameofCurrentComponent);
+			const htmlFileContents = readLWCHTMLFile(htmlFilePath);
+			vscode.window.showErrorMessage(htmlFileContents);
+			vscode.window.showErrorMessage(jsFileContents);
+
 			const apiNames = extractApis(jsFileContents);			
 			let panel = vscode.window.createWebviewPanel("random","LWC Refactor",vscode.ViewColumn.One,
 				{enableScripts:true}
