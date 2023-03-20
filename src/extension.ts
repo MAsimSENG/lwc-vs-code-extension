@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { createUpdatedJsFileContents, getCommonPath, writeToJsFile, createUpdatedHtmlFileContents, getUriOfCurrentComponentFolder, getNameOfCurrentComponent, getLWCScriptFileUri, readLWCScriptFile, getLWCHTMLFileUri, readLWCHTMLFile} from './util';
 import { extractApis } from './apiRefactorUtil';
 export function activate(context: vscode.ExtensionContext) {
-	let disposable = vscode.commands.registerCommand('lwcrefactor.LWCREFACTOR', () => {
+		let disposable = vscode.commands.registerCommand('lwcrefactor.LWCREFACTOR', () => {
 		let editor = vscode.window.activeTextEditor;
 		if(editor){
 			if(!editor.document.uri.fsPath.endsWith('.ts') && !editor.document.uri.fsPath.endsWith('.js') ){
