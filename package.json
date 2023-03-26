@@ -16,9 +16,6 @@
     "Programming Languages",
     "Visualization"
   ],
-  "activationEvents": [
-    "onCommand:lwcrefactor.LWCREFACTOR"
-  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
